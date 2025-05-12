@@ -63,3 +63,17 @@ Erst nach dieser Konfiguration ist ein Zugriff über die Umgebungsvariable `DOCK
 <img src="images/8.png" height="250" width="650">
 
 
+### Jenkins-Pipeline
+
+Für den Jenkins-Pipeline-Build wird in Jenkins ein neues Projekt mit dem Namen `DevOpsDemoDockerBuild` angelegt. Dabei handelt es sich um ein **Pipeline**-Projekt mit  Grundkonfigurationen.
+
+Unter dem Reiter **Pipeline** wird das gewünschte Skript in das Feld **Script** eingefügt.
+
+<img src="images/9.png" height="300" width="400">
+
+Anschliessend kann der Build-Vorgang über den Button **Ausführen** gestartet werden.
+
+<img src="images/10.png" height="350" width="450">
+
+// 32.14
+

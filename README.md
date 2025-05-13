@@ -146,3 +146,30 @@ Im folgenden Screenshot ist der erfolgreiche Build-Vorgang zu sehen, ebenso wie 
 
 <img src="images/19.png" height="300" width="600">
 
+
+<img src="images/21.png" height="150" width="500">
+
+
+### Jenkins Clouds
+
+Unter **Jenkins verwalten/Clouds** kann eine neue Docker-Integration eingerichtet werden. Dazu wird zunächst **New Cloud** ausgewählt und als **Cloud-Name** `Docker`  eingetragen. Nach dem Erstellen wird der **Docker Host URI** angegeben, welcher die Verbindung zur lokalen oder entfernten Docker-Instanz ermöglicht. Anschliessend kann mit dem Button **Testen** geprüft werden, ob die Verbindung erfolgreich ist. Wird die Verbindung erkannt, muss die Option **Enabled** aktiviert und die Konfiguration gespeichert werden. Dadurch wird die Docker-Cloud erfolgreich in Jenkins erstellt.
+
+<img src="images/31.png" height="300" width="400">
+
+Im nächsten Schritt erfolgt die Konfiguration eines Docker-Templates innerhalb der zuvor erstellten Docker-Cloud. Dazu wird in den Einstellungen auf **Konfigurieren** geklickt und anschliessend der Abschnitt **Docker Template konfigurieren** geöffnet. Dort kann ein gewünschtes **Docker Image** hinzugefügt werden. Wichtig ist, dass die Option **Enabled** aktiviert wird, damit das Template verwendet werden kann. Abschliessend wird die Konfiguration mit **Speichern** gesichert.
+
+<img src="images/32.png" height="200" width="350">
+
+
+Damit Jenkins die Ausführung nicht mehr lokal auf der Master-Node, sondern über die konfigurierte Docker-Cloud vornimmt, muss die Master-Node deaktiviert werden. Dazu navigiert man zu **Dashboard / Jenkins verwalten / Nodes**, wählt dort die **master-Node** aus und setzt die Anzahl der **ausführbaren Aufgaben (Executors)** auf **0**. Dadurch wird verhindert, dass Builds lokal ausgeführt werden. Nach der Änderung wird die Konfiguration gespeichert.
+
+<img src="images/33.png" height="120" width="400">
+
+Zum Testen der Konfiguration wurde der Build `DevOpsDemoDockerBuild` ausgeführt. Dabei ist deutlich erkennbar, dass Jenkins den Build nicht mehr lokal, sondern innerhalb eines Docker-Containers durchgeführt hat. 
+
+<img src="images/35.png" height="200" width="400">
+
+Zusätzlich zeigt Docker Desktop während der Ausführung, dass ein entsprechendes, vorkonfiguriertes Image automatisch verwendet wurde. Dieses Image wurde dynamisch geladen und zur Ausführung der Build-Prozesse eingesetzt, was die erfolgreiche Integration von Docker in Jenkins bestätigt.
+
+<img src="images/34.png" height="100" width="1000">
+

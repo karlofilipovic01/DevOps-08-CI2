@@ -169,6 +169,10 @@ Zum Testen der Konfiguration wurde der Build `DevOpsDemoDockerBuild` ausgeführt
 
 <img src="images/35.png" height="200" width="400">
 
+---
+
+<img src="images/36.png" height="250" width="700">
+
 Zusätzlich zeigt Docker Desktop während der Ausführung, dass ein entsprechendes, vorkonfiguriertes Image automatisch verwendet wurde. Dieses Image wurde dynamisch geladen und zur Ausführung der Build-Prozesse eingesetzt, was die erfolgreiche Integration von Docker in Jenkins bestätigt.
 
 <img src="images/34.png" height="100" width="1000">

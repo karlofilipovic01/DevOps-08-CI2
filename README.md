@@ -25,7 +25,7 @@ Anschliessend kann jeweils SonarQube und Jenkins mit den zwei Befehlen zum Netzw
 
 In Jenkins wird unter **Konfiguration** der Bereich **Post-Build-Aktionen** geöffnet. Dort wird die Option **Build-Schritt hinzufügen** ausgewählt und anschliessend **Shell ausführen“** als Schritt gewählt. In das erscheinende Eingabefeld wird der benötigte Shell-Befehl eingegeben. Nach dem Eintragen wird die Konfiguration gespeichert, sodass der Befehl automatisch nach dem Build-Prozess ausgeführt wird. Befehl: 
 
-`cd backend ./gradlew sonar -Dsonar.projectKey=filipkar-backend -Dsonar.projectName='filipkar backend' -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=sqa_70eb3402faeb58043659a31d8f016ec1b43bc98f`
+`cd backend ./gradlew sonar -Dsonar.projectKey=filipkar-backend -Dsonar.projectName='filipkar backend' -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=[TOKEN]`
 
 <img src="images/2.png" height="150" width="800">
 
@@ -71,9 +71,78 @@ Unter dem Reiter **Pipeline** wird das gewünschte Skript in das Feld **Script**
 
 <img src="images/9.png" height="300" width="400">
 
-Anschliessend kann der Build-Vorgang über den Button **Ausführen** gestartet werden.
+Anschliessend kann der Build-Vorgang über den Button **Jetzt bauen** gestartet werden. Nach der erfolgreichen Ausführung ist folgendes in der Konsole zu sehen:
 
 <img src="images/10.png" height="350" width="450">
 
-// 32.14
+
+### Pipeline-Skript erweitern mit Git-Checkout
+
+Nachdem das erste Skript erfolgreich ausgeführt wurde, kann es unter derselben Konfiguration erweitert werden. Jenkins bietet unter dem Abschnitt **Pipeline Syntax** einen sogenannten **Generator**, mit dem sich Groovy-Code für bestimmte Schritte automatisch generieren lässt.
+
+In diesem Fall wird darüber der Code zum **Checkout des Source-Codes aus GitHub** erzeugt. Dazu wird im Dropdown-Menü **Sample Step** die Option  
+`checkout: Check out from version control` ausgewählt.
+
+Wichtig: Der **Branch Specifier** muss auf `main` geändert werden (statt dem standardmässig eingetragenen `master`), damit das Projekt aus dem richtigen Branch geladen und korrekt ausgeführt wird.
+
+<img src="images/11.png" height="350" width="450">
+
+Nachdem kann auch **Generate Pipeline Script** gedrückt werden. Dabei erhalten wir ieinen Code
+
+### Pipeline-Snippet für Git-Checkout generieren
+
+Nachdem die gewünschten Einstellungen im **Snippet Generator** vorgenommen wurden, kann über den Button **Generate Pipeline Script** automatisch der passende Groovy-Code erzeugt werden.  In diesem Fall wird ein `checkout`-Befehl generiert, der den Quellcode aus dem GitHub-Repository auf dem Branch `main` abruft. Zusätzlich wird das hinterlegte Jenkins-Credential für den Zugriff verwendet. 
+
+<img src="images/12.png" height="100" width="1000">
+
+Der generierte Code kann direkt in das Pipeline-Skript eingefügt werden. Unterhalb des `sh 'echo checkout'`. 
+
+<img src="images/13.png" height="120" width="600">
+
+
+Der ganze Build kann mit dem angepasstem Skript nochmals ausgeführt werden. Dabei wird der Checkout im Build selbst unter **Workspace** ersichtlich. 
+
+<img src="images/14.png" height="280" width="600">
+
+
+### Jenkins Pipeline-Skript aus Versionskontrolle laden
+
+Um den **SonarQube-Token** nicht im Code zu hinterlegen, wurde dieser sicher in Jenkins als Credential vom Typ **Secret text** gespeichert. Der Token kann zuvor in SonarQube generiert und anschliessend in Jenkins unter  
+`Dashboard/Jenkins verwalten/Credentials` hinzugefügt werden.
+
+<img src="images/16.png" height="200" width="1000">
+
+Im `Jenkinsfile` im Repository `DevOps-03-DevOpsDemo` wurden anschliessend folgende Anpassungen vorgenommen:
+
+- Anpassung der Repository-URL auf das eigene GitHub-Repository:  
+  `https://github.com/karlofilipovic01/DevOps-03-DevOpsDemo`
+- Anpassung des Node.js-Namens:  
+  Da Node.js in Jenkins als `22.11.0` konfiguriert ist, musste die Bezeichnung im `Jenkinsfile` entsprechend geändert werden.
+- Aktualisierung der `credentialsId` für SonarQube auf `sonar`, passend zur in Jenkins hinterlegten ID des Tokens.
+
+Diese Anpassungen wurden im entsprechenden Repository comitted.
+
+Zur Überprüfung wurde das Skript manuell aus dem Repository kopiert, eingefügt und erfolgreich im Jenkins ausgeführt.
+
+<img src="images/17.png" height="300" width="1000">
+
+Manueller Skript:
+
+<img src="images/skript.png" height="300" width="500">
+
+--- 
+
+
+Im nächsten Schritt wird das Pipeline-Skript nicht mehr manuell in Jenkins eingegeben, sondern automatisch aus dem Versionskontrollsystem (SCM) geladen.
+Dazu wird unter **Definition** die Option **Pipeline script from SCM** ausgewählt. Im Feld **Script Path** wird der Pfad zur Pipeline-Datei angegeben – typischerweise `Jenkinsfile`, welches im Root-Verzeichnis des Projekts liegt.
+
+Diese Methode bietet den Vorteil, dass die gesamte Build-Logik versioniert und nachvollziehbar gespeichert wird – analog zur klassischen Code-Entwicklung. Änderungen an der Pipeline sind somit transparent, historisierbar und im Team kollaborativ wartbar.
+
+<img src="images/18.png" height="300" width="600">
+
+Der Build kann anschliessend erneut ausgeführt werden. Dabei wird automatisch auf das im Repository gespeicherte `Jenkinsfile` zurückgegriffen, sodass alle definierten Schritte eigenständig durch Jenkins ausgeführt werden. Dazu gehören unter anderem das Frontend- und Backend-Building, die Testabdeckung mit JaCoCo, die Testergebnisse über JUnit, die statische Codeanalyse mit SonarQube sowie der Docker-Build. 
+
+Im folgenden Screenshot ist der erfolgreiche Build-Vorgang zu sehen, ebenso wie der Commit, der die Anpassung des `Jenkinsfile` dokumentiert.
+
+<img src="images/19.png" height="300" width="600">
 
